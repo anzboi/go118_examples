@@ -1,6 +1,6 @@
 package stream
 
-import "go1_18/generics/iterator"
+import "github.com/anzboi/go118-examples/generics/iterator"
 
 // stream[T, S] implements Stream[S]
 //

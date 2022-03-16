@@ -1,4 +1,4 @@
-package main
+package limitations
 
 type MyInterface[T any] interface {
 	Value() T

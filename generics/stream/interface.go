@@ -1,4 +1,4 @@
-package main
+package stream
 
 type Stream[T any] interface {
 	ForEach(func(T))
