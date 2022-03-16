@@ -263,7 +263,7 @@ There are a number of limitations with the current generic implementation in go 
 
 A class of limitations can be traced back to one single fact.
 
-> It is hard to know when a function signature can match the type signature of a generic function given a suitable combination of type parameters.
+> It is hard to know when a function signature can match the type signature of a generic function. Does a suitable substitution for type parameters exist?
 
 Consider the following example.
 
