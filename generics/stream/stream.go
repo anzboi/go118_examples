@@ -98,7 +98,7 @@ func Map[T, S any](s Stream[T], mapFn func(T) S) Stream[S] {
 	}
 }
 
-// Implements reduce
+// Implements reduce. Must be a package function becase we cannot define a generic method Stream[T].Reduce[S]
 // Destructive
 func Reduce[T, S any](s Stream[T], init S, reduceFn func(T, S) S) S {
 	current := init
