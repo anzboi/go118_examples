@@ -98,6 +98,16 @@ func Map[T, S any](s Stream[T], mapFn func(T) S) Stream[S] {
 	}
 }
 
+// Implements reduce
+// Destructive
+func Reduce[T, S any](s Stream[T], init S, reduceFn func(T, S) S) S {
+	current := init
+	s.ForEach(func(t T) {
+		current = reduceFn(t, current)
+	})
+	return current
+}
+
 type filterIter[T any] struct {
 	iterator.Iterator[T]
 	filterFn func(T) bool
