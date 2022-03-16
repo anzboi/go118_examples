@@ -76,7 +76,7 @@ type MyInterface[T any] interface {
 }
 ```
 
-DISCLAIMER: What we have described here is not quite accurate to how generics are actually implemented. It is actually closer to c++ templates. Generics can and do find there way into a go program in subtle ways (see the changes to the `reflect` package). This description may also not perfectly match how generics work in other languages.
+DISCLAIMER: What we have described here is a useful framework to think about generics. The actual implementation may differ. The [design proposal](https://go.googlesource.com/proposal/+/refs/heads/master/design/43651-type-parameters.md#efficiency) does not specify how to implement generics, but provides a few options.
 
 ### So where does generic code fit?
 
@@ -257,7 +257,7 @@ f2 := NewFoo("hello world") // Same
 
 ## Limitations
 
-There are a number of limitations with the current generic implementation in go 1.18.
+There are a number of limitations with the current generic implementation in go 1.18. For a more complete list, see the [omissions section](https://go.googlesource.com/proposal/+/refs/heads/master/design/43651-type-parameters.md#omissions) of the design proposal.
 
 ### Type Inference and Methods
 
@@ -411,28 +411,4 @@ Sort([]int{3, 2, 1}) // invalid: you've lost the ability to sort an array of int
 
 ## Common Pitfalls
 
-It is really easy to misuse generic types. Here we go over some of the easiest ones to miss.
-
-### Code that doesn't need to be generic.
-
-Consider the following code.
-
-```go
-func PrintString[T fmt.Stringer](value T) {
-    fmt.Println(value.String())
-}
-```
-
-We are restricting the input type to be anything that implements `fmt.Stringer`. But we can already do that without generics. There is no reason to make the function generic if it only needs to call `String()` on the input. It is expecting behaviour, not acting on the type.
-
-```go
-func PrintString(value fmt.Stringer) {
-    fmt.Println(value.String())
-}
-```
-
-### Generics making code more complicated.
-
-It is easy to see a use for generics and use them, when a better, simpler design without generics exists.
-
-###
+TODO
