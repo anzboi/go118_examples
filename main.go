@@ -19,8 +19,14 @@ func main() {
 	}
 	fmt.Println("First odd number:", firstOdd)
 
-	sum := stream.Reduce(stream.NewStreamOf(arr...), 0, func(t int, s int) int {
+	sum := stream.Reduce(stream.NewStreamOf(arr...), 0, func(t, s int) int {
 		return t + s
 	})
 	fmt.Println("Sum:", sum)
+
+	isOdd := func(i int) bool { return i%2 == 1 }
+	sumOfOdd := stream.Reduce(stream.NewStreamOf(arr...).Filter(isOdd), 0, func(t, s int) int {
+		return t + s
+	})
+	fmt.Println("Sum of odd:", sumOfOdd)
 }
