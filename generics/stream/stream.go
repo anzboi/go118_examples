@@ -9,7 +9,9 @@ type Stream[T any] interface {
 	AsList() []T
 	First() (T, bool)
 
-	isStream() // No one else is allowed to implement
+	// No one else is allowed to implement. We need this to implement Map reliably.
+	// we want to replace this with generic methods when go supports it
+	isStream()
 }
 
 // stream implements the Stream interface
@@ -28,12 +30,16 @@ func NewStream[T any](iter iterator.Iterator[T]) Stream[T] {
 	}
 }
 
+// Returns a stream from a variadic list of items
 func NewStreamOf[T any](elems ...T) Stream[T] {
 	return &stream[T]{
 		base: iterator.NewIterator(elems),
 	}
 }
 
+// Foreach runs the function on each element in the stream
+//
+// Destructive.
 func (s *stream[T]) ForEach(fn func(T)) {
 	for s.base.Next() {
 		fn(s.base.Value())
@@ -50,6 +56,7 @@ func (s *stream[T]) Filter(fn func(T) bool) Stream[T] {
 }
 
 // Count counts the number of elements in the stream
+//
 // Destructive
 func (s *stream[T]) Count() int {
 	count := 0
@@ -60,6 +67,7 @@ func (s *stream[T]) Count() int {
 }
 
 // AsList converts the stream into a list
+//
 // Destructive
 func (s *stream[T]) AsList() []T {
 	ret := make([]T, 0)
@@ -70,8 +78,9 @@ func (s *stream[T]) AsList() []T {
 }
 
 // First returns the first element in the stream
+//
 // Destructive in the sense that the stream no longer
-// has access to the first element
+// has access to the first element.
 func (s *stream[T]) First() (T, bool) {
 	if !s.base.Next() {
 		var zero T
@@ -99,6 +108,7 @@ func Map[T, S any](s Stream[T], mapFn func(T) S) Stream[S] {
 }
 
 // Implements reduce. Must be a package function becase we cannot define a generic method Stream[T].Reduce[S]
+//
 // Destructive
 func Reduce[T, S any](s Stream[T], init S, reduceFn func(T, S) S) S {
 	current := init
@@ -108,6 +118,9 @@ func Reduce[T, S any](s Stream[T], init S, reduceFn func(T, S) S) S {
 	return current
 }
 
+// Adds a filter on top of a normal iterator
+//
+// Skips over items that do not satisfy the filter
 type filterIter[T any] struct {
 	iterator.Iterator[T]
 	filterFn func(T) bool
@@ -122,6 +135,9 @@ func (f *filterIter[T]) Next() bool {
 	return false
 }
 
+// Adds a map function on top of an iterator
+//
+// *mapIter[T, S] Implements Iterator[S]
 type mapIter[T, S any] struct {
 	iterator.Iterator[T]
 	mapFn func(T) S
